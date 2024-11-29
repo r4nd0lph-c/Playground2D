@@ -112,5 +112,54 @@ namespace TimeSystem
             Month = month;
             Year = year;
         }
+
+        /// <summary>
+        /// Creates an <see cref="TimeData"/> instance from an absolute time value in seconds.
+        /// </summary>
+        public static TimeData FromAbsoluteTime(double absoluteTime)
+        {
+            const float secondsPerMinute = TimeConstants.MaxSecond;
+            const float secondsPerHour = secondsPerMinute * TimeConstants.MaxMinute;
+            const float secondsPerDay = secondsPerHour * TimeConstants.MaxHour;
+            const float secondsPerMonth = secondsPerDay * TimeConstants.MaxDay;
+            const float secondsPerYear = secondsPerMonth * TimeConstants.MaxMonth;
+
+            int year = (int)(absoluteTime / secondsPerYear);
+            absoluteTime %= secondsPerYear;
+            int month = (int)(absoluteTime / secondsPerMonth);
+            absoluteTime %= secondsPerMonth;
+            int day = (int)(absoluteTime / secondsPerDay);
+            absoluteTime %= secondsPerDay;
+            int hour = (int)(absoluteTime / secondsPerHour);
+            absoluteTime %= secondsPerHour;
+            int minute = (int)(absoluteTime / secondsPerMinute);
+            float second = (float)(absoluteTime % secondsPerMinute);
+
+            return new TimeData(second, minute, hour, day, month, year);
+        }
+
+        /// <summary>
+        /// Converts the current TimeData instance into absolute time value in seconds.
+        /// </summary>
+        public double ToAbsoluteTime()
+        {
+            const float secondsPerMinute = TimeConstants.MaxSecond;
+            const float secondsPerHour = secondsPerMinute * TimeConstants.MaxMinute;
+            const float secondsPerDay = secondsPerHour * TimeConstants.MaxHour;
+            const float secondsPerMonth = secondsPerDay * TimeConstants.MaxDay;
+            const float secondsPerYear = secondsPerMonth * TimeConstants.MaxMonth;
+
+            return Second + Minute * secondsPerMinute + Hour * secondsPerHour + Day * secondsPerDay +
+                   Month * secondsPerMonth + Year * secondsPerYear;
+        }
+
+        /// <summary>
+        /// Returns a string representation of the TimeData object in the format:
+        /// "YYYY-MM-DD HH:MM:SS".
+        /// </summary>
+        public override string ToString()
+        {
+            return $"{Year:D4}-{Month:D2}-{Day:D2} {Hour:D2}:{Minute:D2}:{Second:F2}";
+        }
     }
 }
