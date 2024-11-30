@@ -1,12 +1,13 @@
 ﻿namespace TimeSystem
 {
     /// <summary>
-    /// A static class containing constants for time-related boundaries used in the game.
-    /// These values define the minimum and maximum ranges for various time components,
-    /// such as seconds, minutes, hours, days, months, years.
+    /// Provides constant values for time-related components used in the game.
+    /// These constants define the boundaries and conversion rates for various time units,
+    /// ensuring consistent handling of time throughout the system.
     /// </summary>
     public static class TimeConstants
     {
+        // Boundaries for time units
         public const float MinSecond = 0.0f;
         public const float MaxSecond = 60.0f;
 
@@ -24,5 +25,12 @@
 
         public const int MinYear = 0;
         public const int MaxYear = 1000;
+
+        // Conversion rates for time units
+        public const float SecondsPerMinute = MaxSecond;
+        public const float SecondsPerHour = SecondsPerMinute * MaxMinute;
+        public const float SecondsPerDay = SecondsPerHour * MaxHour;
+        public const float SecondsPerMonth = SecondsPerDay * MaxDay;
+        public const float SecondsPerYear = SecondsPerMonth * MaxMonth;
     }
 }
