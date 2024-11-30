@@ -3,8 +3,8 @@
 namespace TimeSystem
 {
     /// <summary>
-    /// Represents the time data for in-game time management (second, minute, hour, day, month, year).
-    /// This class ensures that all time components are within specified ranges, throwing exceptions for invalid values.
+    /// Defines a structure for managing in-game time, encapsulating components like seconds, minutes, hours, days, months, and years. 
+    /// Ensures that each component respects predefined valid ranges and provides utility methods for conversions and comparisons.
     /// </summary>
     public class TimeData
     {
@@ -88,7 +88,7 @@ namespace TimeSystem
         }
 
         /// <summary>
-        /// Default constructor that initializes the time data with minimum valid values.
+        /// Constructor that initializes the time data with minimum valid values.
         /// </summary>
         public TimeData()
         {
@@ -118,39 +118,86 @@ namespace TimeSystem
         /// </summary>
         public static TimeData FromAbsoluteTime(double absoluteTime)
         {
-            const float secondsPerMinute = TimeConstants.MaxSecond;
-            const float secondsPerHour = secondsPerMinute * TimeConstants.MaxMinute;
-            const float secondsPerDay = secondsPerHour * TimeConstants.MaxHour;
-            const float secondsPerMonth = secondsPerDay * TimeConstants.MaxDay;
-            const float secondsPerYear = secondsPerMonth * TimeConstants.MaxMonth;
-
-            int year = (int)(absoluteTime / secondsPerYear);
-            absoluteTime %= secondsPerYear;
-            int month = (int)(absoluteTime / secondsPerMonth);
-            absoluteTime %= secondsPerMonth;
-            int day = (int)(absoluteTime / secondsPerDay);
-            absoluteTime %= secondsPerDay;
-            int hour = (int)(absoluteTime / secondsPerHour);
-            absoluteTime %= secondsPerHour;
-            int minute = (int)(absoluteTime / secondsPerMinute);
-            float second = (float)(absoluteTime % secondsPerMinute);
+            int year = (int)(absoluteTime / TimeConstants.SecondsPerYear);
+            absoluteTime %= TimeConstants.SecondsPerYear;
+            int month = (int)(absoluteTime / TimeConstants.SecondsPerMonth);
+            absoluteTime %= TimeConstants.SecondsPerMonth;
+            int day = (int)(absoluteTime / TimeConstants.SecondsPerDay);
+            absoluteTime %= TimeConstants.SecondsPerDay;
+            int hour = (int)(absoluteTime / TimeConstants.SecondsPerHour);
+            absoluteTime %= TimeConstants.SecondsPerHour;
+            int minute = (int)(absoluteTime / TimeConstants.SecondsPerMinute);
+            float second = (float)(absoluteTime % TimeConstants.SecondsPerMinute);
 
             return new TimeData(second, minute, hour, day, month, year);
         }
 
         /// <summary>
-        /// Converts the current TimeData instance into absolute time value in seconds.
+        /// Creates an absolute time value in seconds from an <see cref="TimeData"/> instance.
         /// </summary>
-        public double ToAbsoluteTime()
+        public static double ToAbsoluteTime(TimeData formattedTime)
         {
-            const float secondsPerMinute = TimeConstants.MaxSecond;
-            const float secondsPerHour = secondsPerMinute * TimeConstants.MaxMinute;
-            const float secondsPerDay = secondsPerHour * TimeConstants.MaxHour;
-            const float secondsPerMonth = secondsPerDay * TimeConstants.MaxDay;
-            const float secondsPerYear = secondsPerMonth * TimeConstants.MaxMonth;
+            return formattedTime.Second +
+                   formattedTime.Minute * TimeConstants.SecondsPerMinute +
+                   formattedTime.Hour * TimeConstants.SecondsPerHour +
+                   formattedTime.Day * TimeConstants.SecondsPerDay +
+                   formattedTime.Month * TimeConstants.SecondsPerMonth +
+                   formattedTime.Year * TimeConstants.SecondsPerYear;
+        }
 
-            return Second + Minute * secondsPerMinute + Hour * secondsPerHour + Day * secondsPerDay +
-                   Month * secondsPerMonth + Year * secondsPerYear;
+        /// <summary>
+        /// Determines whether two TimeData instances are equal within a small tolerance.
+        /// </summary>
+        public static bool operator ==(TimeData a, TimeData b)
+        {
+            const float tolerance = 0.001f;
+
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+
+            return Math.Abs(ToAbsoluteTime(a) - ToAbsoluteTime(b)) < tolerance;
+        }
+
+        /// <summary>
+        /// Determines whether two TimeData instances are not equal.
+        /// </summary>
+        public static bool operator !=(TimeData a, TimeData b) => !(a == b);
+
+        /// <summary>
+        /// Determines whether one TimeData instance is less than or equal to another.
+        /// </summary>
+        public static bool operator <=(TimeData a, TimeData b) => ToAbsoluteTime(a) <= ToAbsoluteTime(b);
+
+        /// <summary>
+        /// Determines whether one TimeData instance is greater than or equal to another.
+        /// </summary>
+        public static bool operator >=(TimeData a, TimeData b) => ToAbsoluteTime(a) >= ToAbsoluteTime(b);
+
+        /// <summary>
+        /// Determines whether one TimeData instance is less than another.
+        /// </summary>
+        public static bool operator <(TimeData a, TimeData b) => ToAbsoluteTime(a) < ToAbsoluteTime(b);
+
+        /// <summary>
+        /// Determines whether one TimeData instance is greater than another.
+        /// </summary>
+        public static bool operator >(TimeData a, TimeData b) => ToAbsoluteTime(a) > ToAbsoluteTime(b);
+
+        /// <summary>
+        /// Adds two TimeData instances together.
+        /// </summary>
+        public static TimeData operator +(TimeData a, TimeData b) =>
+            FromAbsoluteTime(ToAbsoluteTime(a) + ToAbsoluteTime(b));
+
+        /// <summary>
+        /// Subtracts one TimeData instance from another. Throws an exception if the first instance is less than the second.
+        /// </summary>
+        public static TimeData operator -(TimeData a, TimeData b)
+        {
+            if (a < b)
+                throw new InvalidOperationException("Cannot subtract a larger TimeData from a smaller one");
+
+            return FromAbsoluteTime(ToAbsoluteTime(a) - ToAbsoluteTime(b));
         }
 
         /// <summary>
