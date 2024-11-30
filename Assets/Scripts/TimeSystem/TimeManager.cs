@@ -13,7 +13,7 @@ namespace TimeSystem
         private double _absoluteTime;
 
         [Header("SETTINGS")]
-        [SerializeField, Range(0.0f, 144.0f), Tooltip("The scale at which time passes")]
+        [SerializeField, Min(0.0f), Tooltip("The scale at which time passes")]
         private float scale = 1.0f;
 
         [Tooltip("Indicates whether time is currently paused")]
