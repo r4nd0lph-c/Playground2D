@@ -32,5 +32,8 @@
         public const float SecondsPerDay = SecondsPerHour * MaxHour;
         public const float SecondsPerMonth = SecondsPerDay * MaxDay;
         public const float SecondsPerYear = SecondsPerMonth * MaxMonth;
+
+        // Acceptable margin of error for comparing floating-point values
+        public const float Tolerance = 1e-5f;
     }
 }

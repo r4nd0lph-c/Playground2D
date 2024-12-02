@@ -146,16 +146,35 @@ namespace TimeSystem
         }
 
         /// <summary>
+        /// Computes a hash code for the current <see cref="TimeData"/> instance.
+        /// The hash code is calculated based on the second (with tolerance applied), minute, hour, day, month, and year.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)(Second / TimeConstants.Tolerance), Minute, Hour, Day, Month, Year);
+        }
+
+        /// <summary>
+        /// Determines whether two TimeData instances are equal within a small tolerance.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj is TimeData other)
+            {
+                return this == other;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Determines whether two TimeData instances are equal within a small tolerance.
         /// </summary>
         public static bool operator ==(TimeData a, TimeData b)
         {
-            const float tolerance = 0.001f;
-
             if (ReferenceEquals(a, b)) return true;
             if (a is null || b is null) return false;
 
-            return Math.Abs(ToAbsoluteTime(a) - ToAbsoluteTime(b)) < tolerance;
+            return Math.Abs(ToAbsoluteTime(a) - ToAbsoluteTime(b)) < TimeConstants.Tolerance;
         }
 
         /// <summary>
