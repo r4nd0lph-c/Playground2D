@@ -137,7 +137,7 @@ namespace TimeSystem
         /// </summary>
         public static double ToAbsoluteTime(TimeData formattedTime)
         {
-            return formattedTime.Second +
+            return (double)formattedTime.Second +
                    formattedTime.Minute * TimeConstants.SecondsPerMinute +
                    formattedTime.Hour * TimeConstants.SecondsPerHour +
                    formattedTime.Day * TimeConstants.SecondsPerDay +
