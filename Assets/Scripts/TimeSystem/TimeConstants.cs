@@ -34,6 +34,6 @@
         public const float SecondsPerYear = SecondsPerMonth * MaxMonth;
 
         // Acceptable margin of error for comparing floating-point values
-        public const float Tolerance = 1e-5f;
+        public const float Tolerance = 1e-3f; // 1 ms
     }
 }
